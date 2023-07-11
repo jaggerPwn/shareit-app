@@ -40,4 +40,9 @@ public class ItemController {
     public List<ItemDto> searchItems(@RequestParam("text") String text) {
         return itemService.searchItem(text);
     }
+
+    @DeleteMapping
+    public void deleteItems (){
+        itemService.deleteItems();
+    }
 }

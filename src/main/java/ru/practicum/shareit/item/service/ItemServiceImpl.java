@@ -52,4 +52,9 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> searchItem(String text) {
         return itemRepository.searchItem(text);
     }
+
+    @Override
+    public void deleteItems() {
+        itemRepository.deleteItems();
+    }
 }

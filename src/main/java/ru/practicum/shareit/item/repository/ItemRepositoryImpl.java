@@ -74,6 +74,12 @@ public class ItemRepositoryImpl implements ItemRepository {
         return ItemMapper.itemToDtoList(itemList);
     }
 
+    @Override
+    public void deleteItems() {
+        items.clear();
+        nextId = 0;
+    }
+
     private int getId() {
         nextId++;
         return nextId;

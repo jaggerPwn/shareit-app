@@ -14,4 +14,6 @@ public interface UserRepository {
     UserDTO getUserById(int id);
 
     void deleteUserById(int id);
+
+    void deleteUsers();
 }

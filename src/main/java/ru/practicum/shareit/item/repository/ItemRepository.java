@@ -15,4 +15,6 @@ public interface ItemRepository {
     List<ItemDto> getItemsByUser(int userId);
 
     List<ItemDto> searchItem(String text);
+
+    void deleteItems();
 }

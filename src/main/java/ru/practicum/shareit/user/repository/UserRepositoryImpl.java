@@ -60,6 +60,12 @@ public class UserRepositoryImpl implements UserRepository {
         users.remove(id);
     }
 
+    @Override
+    public void deleteUsers() {
+        users.clear();
+        nextId = 0;
+    }
+
     private int getId() {
         nextId++;
         return nextId;

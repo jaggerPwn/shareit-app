@@ -14,4 +14,6 @@ public interface ItemService {
     List<ItemDto> getItemsByUser(int userId);
 
     List<ItemDto> searchItem(String text);
+
+    void deleteItems();
 }
