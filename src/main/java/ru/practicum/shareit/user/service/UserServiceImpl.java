@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
         User user = UserMapper.dtoToUser(userDTO);
-        UserValidator.validate(userDTO, getAllUsers());
+        UserValidator.validateForDuplicateMail(userDTO, getAllUsers());
         return repository.save(user);
     }
 

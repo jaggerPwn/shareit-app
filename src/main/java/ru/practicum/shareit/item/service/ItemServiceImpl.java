@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.validation.ItemValidator;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.validation.UserValidator;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto saveItem(ItemDto itemDto, int userId) {
-        userService.getUserById(userId);
+        UserValidator.validateIfUserExists(userId, userService);
         ItemValidator.saveValidation(itemDto);
         Item item = ItemMapper.dtoToItem(itemDto);
         item.setOwnerId(userId);
@@ -29,7 +30,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, int itemId, int userId) {
-        userService.getUserById(userId);
+        UserValidator.validateIfUserExists(userId, userService);
         ItemValidator.updateValidation(itemDto, itemId);
         Item item = ItemMapper.dtoToItem(itemDto);
         item.setOwnerId(userId);
@@ -38,13 +39,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(int itemId, int userId) {
-        userService.getUserById(userId);
+        UserValidator.validateIfUserExists(userId, userService);
         return itemRepository.getItem(itemId, userId);
     }
 
     @Override
     public List<ItemDto> getItemsByUser(int userId) {
-        userService.getUserById(userId);
+        UserValidator.validateIfUserExists(userId, userService);
         return itemRepository.getItemsByUser(userId);
     }
 
