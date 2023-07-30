@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDTO;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +49,7 @@ class ShareItTests {
         addTwoUsers();
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/users/1")).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        UserDTO user = objectMapper.readValue(contentAsString, UserDTO.class);
+        UserDto user = objectMapper.readValue(contentAsString, UserDto.class);
         Assertions.assertEquals(user.getId(), 1);
         Assertions.assertEquals(user.getEmail(), "user@user.com");
     }
@@ -65,7 +65,7 @@ class ShareItTests {
                         .isOk())
                 .andReturn();
         String contentAsString2 = mvcResult2.getResponse().getContentAsString();
-        UserDTO user = objectMapper.readValue(contentAsString2, UserDTO.class);
+        UserDto user = objectMapper.readValue(contentAsString2, UserDto.class);
         Assertions.assertEquals(user.getName(), "name updated");
     }
 

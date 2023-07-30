@@ -11,6 +11,8 @@ public interface ItemService {
 
     ItemDto getItem(int itemId, int userId);
 
+    boolean validateIfUserHasRights(int ItemId, int UserId);
+
     List<ItemDto> getItemsByUser(int userId);
 
     List<ItemDto> searchItem(String text);
