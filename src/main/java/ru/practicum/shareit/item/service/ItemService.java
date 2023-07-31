@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
@@ -11,11 +12,13 @@ public interface ItemService {
 
     ItemDto getItem(int itemId, int userId);
 
-    boolean validateIfUserHasRights(int ItemId, int UserId);
-
     List<ItemDto> getItemsByUser(int userId);
 
     List<ItemDto> searchItem(String text);
 
     void deleteItems();
+
+    boolean validateIfItemAvailable(int itemId);
+
+    Item getItemOwner(int itemId);
 }

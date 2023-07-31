@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @PersistenceContext
-    EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
     public List<UserDto> getAllUsers() {

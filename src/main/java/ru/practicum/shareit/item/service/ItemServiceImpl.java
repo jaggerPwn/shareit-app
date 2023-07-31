@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.ValidationException404;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -25,6 +27,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingService bookingService;
     @PersistenceContext
     EntityManager entityManager;
 
@@ -62,17 +65,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(int itemId, int userId) {
         UserValidator.validateIfUserExists(userId, userRepository);
-        return ItemMapper.itemToDto(itemRepository.findById(itemId).orElseThrow(() ->
+        ItemDto itemDto = ItemMapper.itemToDto(itemRepository.findById(itemId).orElseThrow(() ->
                 new ValidationException404("item  " + itemId + " not found")));
-    }
-
-    @Override
-    public boolean validateIfUserHasRights (int itemId, int userId){
-        UserValidator.validateIfUserExists(userId, userRepository);
-        Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new ValidationException404("item  " + itemId + " not found"));
-        if (item.getUser().getId() != userId) return false;
-        return true;
+        BookingDtoIdAndBooker nextBooking = bookingService.findNextBookingByItemId(itemId);
+        itemDto.setNextBooking(nextBooking);
+        return itemDto;
     }
 
     @Override
@@ -94,5 +91,17 @@ public class ItemServiceImpl implements ItemService {
         entityManager
                 .createNativeQuery("ALTER TABLE  ITEMS ALTER COLUMN ID  RESTART WITH 1;")
                 .executeUpdate();
+    }
+
+    @Override
+    public boolean validateIfItemAvailable(int itemId) {
+        if (itemRepository.findById(itemId).orElseThrow(() -> new ValidationException404("item not found"))
+                .getAvailable()) return true;
+        return false;
+    }
+
+    @Override
+    public Item getItemOwner(int itemId) {
+        return itemRepository.findById(itemId).orElseThrow(() -> new ValidationException404("item not found" + itemId));
     }
 }

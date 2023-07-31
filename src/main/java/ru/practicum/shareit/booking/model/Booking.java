@@ -25,16 +25,16 @@ public class Booking {
     @NotNull
     @Column(name = "end_date")
     private LocalDateTime end;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JoinColumn(name = "item_id")
     private Item item;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JoinColumn(name = "booker_id")
     private User user;
     @CollectionTable(name = "booking_status", joinColumns = @JoinColumn(name = "booking_id"))
     @Column(name = "status")
-    private BookingStatus status;
+    private String status;
 
 }
