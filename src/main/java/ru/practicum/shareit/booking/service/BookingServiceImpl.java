@@ -1,9 +1,11 @@
 package ru.practicum.shareit.booking.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
+import ru.practicum.shareit.booking.dto.BookingDtoWithStartEndItemId;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingWithItemDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -13,6 +15,7 @@ import ru.practicum.shareit.booking.validation.BookingValidation;
 import ru.practicum.shareit.exception.ValidationException400;
 import ru.practicum.shareit.exception.ValidationException404;
 import ru.practicum.shareit.exception.ValidationException500;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
@@ -22,11 +25,12 @@ import ru.practicum.shareit.user.service.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-
+@Slf4j
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -46,22 +50,20 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingWithItemDto save(BookingWithItemDto bookingWithItemDto, int userId) {
+    public BookingWithItemDto save(BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId, int userId) {
 
-        BookingValidation.validateBooking(bookingWithItemDto, itemService);
-
-        BookingValidation.validateIfUserBooksHisItems(userId, itemService, bookingWithItemDto);
         User user = UserMapper.dtoToUser(userService.getUserById(userId));
-        bookingWithItemDto.setBooker(user);
+        ItemDto item1 = itemService.getItem(bookingDtoWithStartEndItemId.getItemId(), userId);
+        Item item = ItemMapper.dtoToItem(item1);
+        BookingValidation.validateBookingStartEnd(bookingDtoWithStartEndItemId);
 
-        Item item = ItemMapper.dtoToItem(itemService.getItem(bookingWithItemDto.getItem().getId(), userId));
-
-
-        Booking booking = BookingMapper.dtoWithItemToBooking(bookingWithItemDto);
+        Booking booking = BookingMapper.BookingDtoWithStartEndItemIdTOBooking(bookingDtoWithStartEndItemId);
         booking.setUser(user);
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING.name());
 
+        BookingValidation.validateBooking(booking, itemService);
+        BookingValidation.validateIfUserBooksHisItems(userId, itemService, booking);
 
         Booking savedBooking = bookingRepository.save(booking);
         return BookingMapper.bookingToDtoWithItem(savedBooking);
@@ -174,8 +176,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDtoIdAndBooker findNextBookingByItemId(int itemId) {
-        return BookingMapper.bookingToDtoIdAndBooker(bookingRepository.findNextBookingByItemId(itemId));
+    public List<BookingDtoIdAndBooker> findNextAndLastBookingByItemId(int itemId, int userId) {
+        Booking booking = null;
+        try {
+            booking = bookingRepository.findById(itemId).get();
+        } catch (NoSuchElementException e) {
+            log.debug("didn't found booking to item " + itemId);
+        }
+        if (booking != null) {
+            if (booking.getItem().getUser().getId() != userId) {
+                return List.of(null, null);
+            }
+
+            List<BookingDtoIdAndBooker> lastAndNextBookings = new ArrayList<>();
+
+            lastAndNextBookings.add
+                    (BookingMapper.bookingToDtoIdAndBooker(bookingRepository.findNextBookingByItemId(itemId)));
+            lastAndNextBookings.add
+                    (BookingMapper.bookingToDtoIdAndBooker(bookingRepository.findLastBookingByItemId(itemId)));
+            return lastAndNextBookings;
+        } else return List.of(null, null);
     }
+
 
 }

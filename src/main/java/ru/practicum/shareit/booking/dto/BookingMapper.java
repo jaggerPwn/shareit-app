@@ -6,6 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookingMapper {
+    public static Booking BookingDtoWithStartEndItemIdTOBooking
+            (BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId){
+        return Booking.builder()
+                .id(bookingDtoWithStartEndItemId.getId())
+                .start(bookingDtoWithStartEndItemId.getStart())
+                .end(bookingDtoWithStartEndItemId.getEnd())
+                .build();
+    }
 
     public static BookingDtoIdAndBooker bookingToDtoIdAndBooker(Booking booking) {
         return BookingDtoIdAndBooker.builder()
@@ -19,6 +27,7 @@ public class BookingMapper {
                 .map(BookingMapper::bookingToDtoIdAndBooker)
                 .collect(Collectors.toList());
     }
+
 
     public static List<Booking> dtoToBookingList(List<BookingWithItemDto> bookingDtoIdAndBookers) {
         return bookingDtoIdAndBookers.stream()

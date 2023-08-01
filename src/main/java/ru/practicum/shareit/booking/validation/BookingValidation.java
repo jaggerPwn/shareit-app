@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.validation;
 
-import ru.practicum.shareit.booking.dto.BookingWithItemDto;
+import ru.practicum.shareit.booking.dto.BookingDtoWithStartEndItemId;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.ValidationException400;
@@ -12,23 +12,21 @@ import java.time.LocalDateTime;
 
 public class BookingValidation {
 
-    public static void validateBooking(BookingWithItemDto bookingWithItemDto, ItemService itemService) {
-        if (bookingWithItemDto.getEnd() == null || bookingWithItemDto.getStart() == null)
-            throw new ValidationException400("item " + bookingWithItemDto.getItem().getId() + " has null dates");
+    public static void validateBooking(Booking booking, ItemService itemService) {
 
-        if (bookingWithItemDto.getStart().isBefore(LocalDateTime.now()))
-            throw new ValidationException400("Start date " + bookingWithItemDto.getStart() + " cant be  in past");
+        if (booking.getStart().isBefore(LocalDateTime.now()))
+            throw new ValidationException400("Start date " + booking.getStart() + " cant be  in past");
 
-        if (!itemService.validateIfItemAvailable(bookingWithItemDto.getItem().getId()))
-            throw new ValidationException400("item " + bookingWithItemDto.getItem().getId() + " is unavailable");
+        if (!itemService.validateIfItemAvailable(booking.getItem().getId()))
+            throw new ValidationException400("item " + booking.getItem().getId() + " is unavailable");
 
-        if (bookingWithItemDto.getEnd().isBefore(bookingWithItemDto.getStart()))
+        if (booking.getEnd().isBefore(booking.getStart()))
             throw new ValidationException400("end: " +
-                    bookingWithItemDto.getEnd() + "is before start: " + bookingWithItemDto.getStart());
+                    booking.getEnd() + "is before start: " + booking.getStart());
 
-        if (bookingWithItemDto.getEnd().isEqual(bookingWithItemDto.getStart()))
+        if (booking.getEnd().isEqual(booking.getStart()))
             throw new ValidationException400("end: " +
-                    bookingWithItemDto.getEnd() + "is equal start: " + bookingWithItemDto.getStart());
+                    booking.getEnd() + "is equal start: " + booking.getStart());
     }
 
     public static void validateUserAuthorization(int bookingId, int userId,
@@ -52,8 +50,21 @@ public class BookingValidation {
     }
 
     public static void validateIfUserBooksHisItems(int userId, ItemService itemService,
-                                                   BookingWithItemDto bookingWithItemDto) {
-        if (itemService.getItemOwner(bookingWithItemDto.getItem().getId()).getId() == userId)
+                                                   Booking booking) {
+        if (itemService.getItemOwner(booking.getItem().getId()).getId() == userId)
             throw new ValidationException404("not authorized");
     }
+
+    public static void validateBookingStartEnd(BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId) {
+        if (bookingDtoWithStartEndItemId.getStart() == null || bookingDtoWithStartEndItemId.getEnd() == null) {
+            throw new ValidationException400("Booking must have both dates");
+        }
+    }
+//not working in TZ14 for existing POSTMAN tests
+//    public static void validateForIntersection(Booking booking, BookingRepository bookingRepository) {
+//        Booking intersections = bookingRepository.findIntersections(booking.getStart(), booking.getEnd());
+//        if (intersections != null)
+//            throw new ValidationException400
+//                    ("found intersections from " + booking.getStart() + " to " + booking.getEnd());
+//    }
 }

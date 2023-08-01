@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -65,17 +67,21 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(int itemId, int userId) {
         UserValidator.validateIfUserExists(userId, userRepository);
+
         ItemDto itemDto = ItemMapper.itemToDto(itemRepository.findById(itemId).orElseThrow(() ->
                 new ValidationException404("item  " + itemId + " not found")));
-        BookingDtoIdAndBooker nextBooking = bookingService.findNextBookingByItemId(itemId);
-        itemDto.setNextBooking(nextBooking);
+        tryToAddNextAndLastBooking(itemId, userId, itemDto);
         return itemDto;
     }
 
     @Override
     public List<ItemDto> getItemsByUser(int userId) {
         UserValidator.validateIfUserExists(userId, userRepository);
-        return ItemMapper.itemToDtoList(itemRepository.findByUserId(userId));
+        List<ItemDto> itemDtos = ItemMapper.itemToDtoList(itemRepository.findByUserIdOrderByIdAsc(userId));
+        for (ItemDto itemDto : itemDtos) {
+            tryToAddNextAndLastBooking(itemDto.getId(), userId, itemDto);
+        }
+        return itemDtos;
     }
 
     @Override
@@ -95,13 +101,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public boolean validateIfItemAvailable(int itemId) {
-        if (itemRepository.findById(itemId).orElseThrow(() -> new ValidationException404("item not found"))
-                .getAvailable()) return true;
-        return false;
+        return itemRepository.findById(itemId).orElseThrow(() -> new ValidationException404("item not found"))
+                .getAvailable();
     }
 
     @Override
     public Item getItemOwner(int itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new ValidationException404("item not found" + itemId));
+    }
+
+    private void tryToAddNextAndLastBooking(int itemId, int userId, ItemDto itemDto) {
+        try {
+            List<BookingDtoIdAndBooker> nextBooking = bookingService.findNextAndLastBookingByItemId(itemId, userId);
+            itemDto.setLastBooking(nextBooking.get(1));
+            itemDto.setNextBooking(nextBooking.get(0));
+        } catch (NullPointerException e) {
+            log.debug("Could not load next booking.");
+        }
     }
 }

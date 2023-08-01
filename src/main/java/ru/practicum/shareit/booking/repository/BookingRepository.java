@@ -52,10 +52,27 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("select b1 " +
             "from Booking as b1 " +
             "where b1.start in " +
+            "(select (min(b.start)) as s " +
+            "from Booking b " +
+            "JOIN b.item i " +
+            "where i.id  = ?1 and b.start > current_timestamp and b.status = 'APPROVED')"
+    )
+    Booking findNextBookingByItemId(int itemId);
+
+    @Query("select b1 " +
+            "from Booking as b1 " +
+            "where b1.start in " +
             "(select (max(b.start)) as s " +
             "from Booking b " +
             "JOIN b.item i " +
             "where i.id  = ?1 and b.start < current_timestamp and b.status = 'APPROVED')"
     )
-    Booking findNextBookingByItemId(int itemId);
+    Booking findLastBookingByItemId(int itemId);
+//    not working in TZ14 for existing POSTMAN tests
+//    @Query("select b " +
+//            "from Booking b " +
+//            "where b.end > ?1 " +
+//            "and b.start < ?2 " +
+//            "and b.status = 'APPROVED'")
+//    Booking findIntersections(LocalDateTime startDate, LocalDateTime endDate);
 }
