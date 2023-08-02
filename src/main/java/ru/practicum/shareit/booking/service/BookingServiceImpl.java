@@ -135,17 +135,18 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId));
             case "FUTURE":
-                statuses = List.of("WAITING", "APPROVED");
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId, statuses));
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInFuture(userId));
             case "PAST":
-                statuses = List.of("REJECTED", "CANCELED");
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInPast(userId));
+            case "CURRENT":
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInCurrent(userId));
+            case "WAITING":
+                statuses = List.of("WAITING");
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId, statuses));
             case "REJECTED":
                 statuses = List.of("REJECTED");
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId, statuses));
-            case "WAITING":
-                statuses = List.of("WAITING");
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId, statuses));
+
             default:
                 throw new ValidationException500("Unknown state: UNSUPPORTED_STATUS");
         }
@@ -159,16 +160,16 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId));
             case "FUTURE":
-                statuses = List.of("WAITING", "APPROVED");
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInFuture(userId));
             case "PAST":
-                statuses = List.of("REJECTED", "CANCELED");
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInPast(userId));
+            case "CURRENT":
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInCurrent(userId));
+            case "WAITING":
+                statuses = List.of("WAITING");
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
             case "REJECTED":
                 statuses = List.of("REJECTED");
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
-            case "WAITING":
-                statuses = List.of("WAITING");
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
             default:
                 throw new ValidationException500("Unknown state: UNSUPPORTED_STATUS");
@@ -176,26 +177,52 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoIdAndBooker> findNextAndLastBookingByItemId(int itemId, int userId) {
-        Booking booking = null;
-        try {
-            booking = bookingRepository.findById(itemId).get();
-        } catch (NoSuchElementException e) {
-            log.debug("didn't found booking to item " + itemId);
+    public List<BookingDtoIdAndBooker> findNextAndLastBookingByItemId(int itemId, int userId, ItemDto itemDto) {
+        List<BookingDtoIdAndBooker> lastAndNextBookings = new ArrayList<>();
+
+
+        if (bookingRepository.findAllByItemId(itemId).isEmpty())
+            return new ArrayList<>();
+
+        int ownerId = itemService.getItemById(itemId).getUser().getId();
+        if (ownerId != userId) {
+            return new ArrayList<>();
         }
-        if (booking != null) {
-            if (booking.getItem().getUser().getId() != userId) {
-                return List.of(null, null);
-            }
+        markLastAndNextBookingsFromCurTime(itemId, lastAndNextBookings);
+        return lastAndNextBookings;
+    }
 
-            List<BookingDtoIdAndBooker> lastAndNextBookings = new ArrayList<>();
+    private void markLastAndNextBookingsFromCurTime(int itemId, List<BookingDtoIdAndBooker> lastAndNextBookings) {
+        Booking nextBookingByItemId = null;
+        try {
+            nextBookingByItemId = bookingRepository.findNextBookingByItemId(itemId);
+            lastAndNextBookings.add
+                    (BookingMapper.bookingToDtoIdAndBooker(nextBookingByItemId));
+        } catch (
+                Exception e) {
+            log.debug("last booking for item " + itemId + " not found");
+        }
+        if (nextBookingByItemId == null) {
+            lastAndNextBookings.add(null);
+        }
+        Booking lastBookingByItemId = null;
+        try {
+            lastBookingByItemId = bookingRepository.findLastBookingByItemId(itemId);
+            lastAndNextBookings.add
+                    (BookingMapper.bookingToDtoIdAndBooker(lastBookingByItemId));
+        } catch (Exception e) {
+            log.debug("next booking for item " + itemId + " not found");
+        }
+        if (lastBookingByItemId == null) {
 
-            lastAndNextBookings.add
-                    (BookingMapper.bookingToDtoIdAndBooker(bookingRepository.findNextBookingByItemId(itemId)));
-            lastAndNextBookings.add
-                    (BookingMapper.bookingToDtoIdAndBooker(bookingRepository.findLastBookingByItemId(itemId)));
-            return lastAndNextBookings;
-        } else return List.of(null, null);
+            lastAndNextBookings.add(null);
+        }
+    }
+
+
+    @Override
+    public List<BookingDtoIdAndBooker> findAllByBookerAndItemIdAndGoodState(int userId, int itemId) {
+        return BookingMapper.ListBookingToDtoIdAndBooker(bookingRepository.findAllByBookerAndItemId(userId, itemId));
     }
 
 

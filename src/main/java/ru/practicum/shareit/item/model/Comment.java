@@ -1,10 +1,11 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +26,7 @@ public class Comment {
     private Item item;
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn(name = "author")
     private User user;
-    LocalDateTime created;
+    @CreationTimestamp
+    private LocalDateTime created;
 }

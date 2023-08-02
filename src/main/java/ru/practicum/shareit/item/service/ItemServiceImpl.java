@@ -6,10 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.ValidationException400;
 import ru.practicum.shareit.exception.ValidationException404;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.validation.ItemValidator;
 import ru.practicum.shareit.user.model.User;
@@ -28,8 +33,10 @@ import java.util.Optional;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final BookingService bookingService;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -71,6 +78,11 @@ public class ItemServiceImpl implements ItemService {
         ItemDto itemDto = ItemMapper.itemToDto(itemRepository.findById(itemId).orElseThrow(() ->
                 new ValidationException404("item  " + itemId + " not found")));
         tryToAddNextAndLastBooking(itemId, userId, itemDto);
+        try {
+            itemDto.setComments(CommentMapper.ListCommentToCommentDto(commentRepository.findAllByItemId(itemId)));
+        } catch (Exception e) {
+            log.debug("comment for item " + itemDto + " not found");
+        }
         return itemDto;
     }
 
@@ -106,15 +118,50 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItemOwner(int itemId) {
+    public Item getItemById(int itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new ValidationException404("item not found" + itemId));
+    }
+
+    @Override
+    @Transactional
+    public CommentDto saveComment(CommentDto commentDto, int itemId, int userId) {
+        List<BookingDtoIdAndBooker> val = bookingService.findAllByBookerAndItemIdAndGoodState(userId, itemId);
+        if (val.isEmpty())
+            throw new ValidationException400(userId + " did not book item " + itemId + " and can't leave comments");
+        if (commentDto.getText().equals("")) throw new ValidationException400("text should not be empty");
+        Comment comment = CommentMapper.commentDtoToComment(commentDto);
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ValidationException404("item not found " + itemId));
+        comment.setItem(item);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ValidationException404("user not found " + userId));
+        comment.setUser(user);
+        comment = commentRepository.save(comment);
+        return CommentMapper.commentToCommentDto(comment);
+    }
+
+    @Override
+    @Transactional
+    public void deleteComments() {
+        commentRepository.deleteAll();
+        entityManager
+                .createNativeQuery("ALTER TABLE COMMENTS ALTER COLUMN ID  RESTART WITH 1;")
+                .executeUpdate();
     }
 
     private void tryToAddNextAndLastBooking(int itemId, int userId, ItemDto itemDto) {
         try {
-            List<BookingDtoIdAndBooker> nextBooking = bookingService.findNextAndLastBookingByItemId(itemId, userId);
-            itemDto.setLastBooking(nextBooking.get(1));
-            itemDto.setNextBooking(nextBooking.get(0));
+            List<BookingDtoIdAndBooker> nextAndLastBooking = bookingService.findNextAndLastBookingByItemId(itemId, userId, itemDto);
+            try {
+                itemDto.setLastBooking(nextAndLastBooking.get(1));
+            } catch (IndexOutOfBoundsException e) {
+                log.debug("last booking for item " + itemId + " cant be vied for user " + userId);
+            }
+            try {
+                itemDto.setNextBooking(nextAndLastBooking.get(0));
+            } catch (IndexOutOfBoundsException e) {
+                log.debug("last booking for item " + itemId + " cant be vied for user " + userId);
+            }
         } catch (NullPointerException e) {
             log.debug("Could not load next booking.");
         }

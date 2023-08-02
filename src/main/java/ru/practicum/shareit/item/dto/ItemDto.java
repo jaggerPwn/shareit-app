@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,4 +24,5 @@ public class ItemDto {
     private Boolean available;
     private BookingDtoIdAndBooker lastBooking;
     private BookingDtoIdAndBooker nextBooking;
+    private List<CommentDto> comments;
 }

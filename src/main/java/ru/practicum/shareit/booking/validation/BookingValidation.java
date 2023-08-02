@@ -51,7 +51,7 @@ public class BookingValidation {
 
     public static void validateIfUserBooksHisItems(int userId, ItemService itemService,
                                                    Booking booking) {
-        if (itemService.getItemOwner(booking.getItem().getId()).getId() == userId)
+        if (itemService.getItemById(booking.getItem().getId()).getId() == userId)
             throw new ValidationException404("not authorized");
     }
 
