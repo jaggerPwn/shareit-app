@@ -44,8 +44,13 @@ class ShareItTests {
         mockMvc.perform(MockMvcRequestBuilders.delete("/items"));
         mockMvc.perform(MockMvcRequestBuilders.delete("/users"));
         objectMapper = new ObjectMapper();
-        //jackson-datatype-jsr310 негативно влияет на прохождение постмен тестов, при этом в идее
-        // если раскомментировать всё проходит
+        //		<dependency>
+        //			<groupId>com.fasterxml.jackson.datatype</groupId>
+        //			<artifactId>jackson-datatype-jsr310</artifactId>
+        //			<version>2.6.0</version>
+        //		</dependency>
+        //		негативно влияет на прохождение постмен тестов, при этом в идее
+        // если раскомментировать и добавить в pom и всё проходит
         //objectMapper.findAndRegisterModules();
     }
     @Test
