@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto saveUser(UserDto userDTO) {
         Optional<User> userOptional = repository.findById(userDTO.getId());
+
         if (userOptional.isPresent()) {
             User userFromDb = userOptional.get();
             if (userDTO.getEmail() == null) {
