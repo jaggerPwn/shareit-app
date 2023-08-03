@@ -23,7 +23,10 @@ import ru.practicum.shareit.user.dto.UserDto;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 @SpringBootTest
 class ShareItTests {
@@ -41,7 +44,7 @@ class ShareItTests {
         mockMvc.perform(MockMvcRequestBuilders.delete("/items"));
         mockMvc.perform(MockMvcRequestBuilders.delete("/users"));
         objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.findAndRegisterModules();
     }
 
 
@@ -142,38 +145,38 @@ class ShareItTests {
         Assertions.assertEquals(bookingDtos.getItem().toString(), "Item(id=2, name=Отвертка, description=Аккумуляторная отвертка, available=true)");
     }
 
-//    @Test
-//    public void addCommentTest() throws Exception {
-//        addTwoUsers();
-//        addTwoItems();
-//        addTwoBookings();
-//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.patch("/bookings/1?approved=true")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .header("X-Sharer-User-Id", 2))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andReturn();
-//        String contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-//        BookingWithItemDto bookingDtos = objectMapper.readValue(contentAsString, BookingWithItemDto.class);
-//        sleep(4000);
-//        addComment();
-//        mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/items/2")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .header("X-Sharer-User-Id", 1))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andReturn();
-//        contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-//        ItemDto itemDto = objectMapper.readValue(contentAsString, ItemDto.class);
-//        Assertions.assertEquals(itemDto.getComments().get(0).getText(), "Add comment from user1");
-//
-//        mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/items/1")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .header("X-Sharer-User-Id", 2))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andReturn();
-//        contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-//        itemDto = objectMapper.readValue(contentAsString, ItemDto.class);
-//        Assertions.assertEquals(itemDto.getComments(), new ArrayList<>());
-//    }
+    @Test
+    public void addCommentTest() throws Exception {
+        addTwoUsers();
+        addTwoItems();
+        addTwoBookings();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.patch("/bookings/1?approved=true")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 2))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        BookingWithItemDto bookingDtos = objectMapper.readValue(contentAsString, BookingWithItemDto.class);
+        sleep(4000);
+        addComment();
+        mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/items/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        ItemDto itemDto = objectMapper.readValue(contentAsString, ItemDto.class);
+        Assertions.assertEquals(itemDto.getComments().get(0).getText(), "Add comment from user1");
+
+        mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/items/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 2))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        itemDto = objectMapper.readValue(contentAsString, ItemDto.class);
+        Assertions.assertEquals(itemDto.getComments(), new ArrayList<>());
+    }
 
     private void addTwoItems() throws Exception {
         String jsonStr =
