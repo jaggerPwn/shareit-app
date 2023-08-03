@@ -194,52 +194,52 @@ class ShareItTests {
                 .content(jsonStr.getBytes())).andExpect(MockMvcResultMatchers.status().isOk());
 
     }
-
-    private void addTwoBookings() throws Exception {
-        String curTime = LocalDateTime.now().plusSeconds(1).toString();
-        String curTimeplusThreeSec = LocalDateTime.now().plusSeconds(3).toString();
-        String jsonStr =
-                "{\n" +
-                        "    \"itemId\": 2,\n" +
-                        "    \"start\": \"" + curTime + "\",\n" +
-                        "    \"end\": \"" + curTimeplusThreeSec + "\"\n" +
-                        "}";
-        mockMvc.perform(MockMvcRequestBuilders.post("/bookings")
-                .header("X-Sharer-User-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonStr.getBytes()));
-
-
-        jsonStr = "{\n" +
-                "    \"itemId\": 1,\n" +
-                "    \"start\": \"" + curTime + "\",\n" +
-                "    \"end\": \"" + curTimeplusThreeSec + "\"\n" +
-                "}";
-        mockMvc.perform(MockMvcRequestBuilders.post("/bookings")
-                .header("X-Sharer-User-Id", 2)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonStr.getBytes()));
-
-    }
-
-    private void addComment() throws Exception {
-        String jsonStr =
-                "{\n" +
-                        "    \"text\": \"Add comment from user1\"\n" +
-                        "}";
-        mockMvc.perform(MockMvcRequestBuilders.post("/items/2/comment")
-                .header("X-Sharer-User-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonStr.getBytes()));
-        jsonStr =
-                "{\n" +
-                        "    \"text\": \"Add comment from user1\"\n" +
-                        "}";
-        mockMvc.perform(MockMvcRequestBuilders.post("/items/1/comment")
-                .header("X-Sharer-User-Id", 2)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonStr.getBytes()));
-    }
+//
+//    private void addTwoBookings() throws Exception {
+//        String curTime = LocalDateTime.now().plusSeconds(1).toString();
+//        String curTimeplusThreeSec = LocalDateTime.now().plusSeconds(3).toString();
+//        String jsonStr =
+//                "{\n" +
+//                        "    \"itemId\": 2,\n" +
+//                        "    \"start\": \"" + curTime + "\",\n" +
+//                        "    \"end\": \"" + curTimeplusThreeSec + "\"\n" +
+//                        "}";
+//        mockMvc.perform(MockMvcRequestBuilders.post("/bookings")
+//                .header("X-Sharer-User-Id", 1)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(jsonStr.getBytes()));
+//
+//
+//        jsonStr = "{\n" +
+//                "    \"itemId\": 1,\n" +
+//                "    \"start\": \"" + curTime + "\",\n" +
+//                "    \"end\": \"" + curTimeplusThreeSec + "\"\n" +
+//                "}";
+//        mockMvc.perform(MockMvcRequestBuilders.post("/bookings")
+//                .header("X-Sharer-User-Id", 2)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(jsonStr.getBytes()));
+//
+//    }
+//
+//    private void addComment() throws Exception {
+//        String jsonStr =
+//                "{\n" +
+//                        "    \"text\": \"Add comment from user1\"\n" +
+//                        "}";
+//        mockMvc.perform(MockMvcRequestBuilders.post("/items/2/comment")
+//                .header("X-Sharer-User-Id", 1)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(jsonStr.getBytes()));
+//        jsonStr =
+//                "{\n" +
+//                        "    \"text\": \"Add comment from user1\"\n" +
+//                        "}";
+//        mockMvc.perform(MockMvcRequestBuilders.post("/items/1/comment")
+//                .header("X-Sharer-User-Id", 2)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(jsonStr.getBytes()));
+//    }
 
     private void addTwoUsers() throws Exception {
         String jsonStr =
