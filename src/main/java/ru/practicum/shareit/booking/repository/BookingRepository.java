@@ -8,8 +8,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    List<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId);
-    List<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId, List<String> status);
+    List<Booking> findAllByUserIdOrderByIdDesc(int userId);
+    List<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId, String status);
 
     @Query(" select b " +
             "from Booking b " +
@@ -18,7 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "where u.id = ?1 " +
             "and b.status in ?2 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerId(int userId, List<String> status);
+    List<Booking> findAllByOwnerId(int userId, String status);
 
     @Query(" select b " +
             "from Booking b " +

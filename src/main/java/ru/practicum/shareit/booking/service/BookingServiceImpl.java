@@ -129,11 +129,11 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingWithItemDto> findAllByBookerId(int userId, String status) {
         BookingValidation.validateIfUserExists(userId, userService);
 
-        List<String> statuses;
+        String statuses;
         if (status == null) status = "All";
         switch (status) {
             case "ALL":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId));
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdOrderByIdDesc(userId));
             case "FUTURE":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInFuture(userId));
             case "PAST":
@@ -141,10 +141,10 @@ public class BookingServiceImpl implements BookingService {
             case "CURRENT":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInCurrent(userId));
             case "WAITING":
-                statuses = List.of("WAITING");
+                statuses = "WAITING";
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId, statuses));
             case "REJECTED":
-                statuses = List.of("REJECTED");
+                statuses = "REJECTED";
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId, statuses));
 
             default:
@@ -155,7 +155,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingWithItemDto> findAllByOwnerId(int userId, String status) {
         BookingValidation.validateIfUserExists(userId, userService);
-        List<String> statuses;
+        String statuses;
         switch (status) {
             case "ALL":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId));
@@ -166,10 +166,10 @@ public class BookingServiceImpl implements BookingService {
             case "CURRENT":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInCurrent(userId));
             case "WAITING":
-                statuses = List.of("WAITING");
+                statuses = "WAITING";
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
             case "REJECTED":
-                statuses = List.of("REJECTED");
+                statuses = "REJECTED";
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
             default:
                 throw new ValidationException500("Unknown state: UNSUPPORTED_STATUS");
