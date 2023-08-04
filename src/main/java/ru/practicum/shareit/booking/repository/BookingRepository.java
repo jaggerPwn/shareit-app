@@ -6,33 +6,10 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    @Query(" select b " +
-            "from Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH b.user u " +
-            "JOIN FETCH i.user " +
-            "where b.id = ?1")
-    Optional<Booking> findById(int bookingId);
-
-    @Query(" select b " +
-            "from Booking b " +
-            "JOIN FETCH b.item " +
-            "JOIN FETCH b.user as u " +
-            "where u.id = ?1 " +
-            "order by b.start desc")
-    List<Booking> findAllByBookerId(int userId);
-
-    @Query(" select b " +
-            "from Booking b " +
-            "JOIN FETCH b.item " +
-            "JOIN FETCH b.user as u " +
-            "where u.id = ?1 " +
-            "and b.status in ?2 " +
-            "order by b.start desc")
-    List<Booking> findAllByBookerId(int userId, List<String> status);
+    List<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId);
+    List<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId, List<String> status);
 
     @Query(" select b " +
             "from Booking b " +
@@ -140,12 +117,4 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findAllByOwnerIdInCurrent(@Param("owner_id") int userId);
 
     List<Booking> findAllByItemId(int itemId);
-
-//    not working in TZ14 for existing POSTMAN tests
-//    @Query("select b " +
-//            "from Booking b " +
-//            "where b.end > ?1 " +
-//            "and b.start < ?2 " +
-//            "and b.status = 'APPROVED'")
-//    Booking findIntersections(LocalDateTime startDate, LocalDateTime endDate);
 }

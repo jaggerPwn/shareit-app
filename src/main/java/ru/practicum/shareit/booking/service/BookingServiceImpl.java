@@ -133,7 +133,7 @@ public class BookingServiceImpl implements BookingService {
         if (status == null) status = "All";
         switch (status) {
             case "ALL":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId));
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId));
             case "FUTURE":
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInFuture(userId));
             case "PAST":
@@ -142,10 +142,10 @@ public class BookingServiceImpl implements BookingService {
                 return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInCurrent(userId));
             case "WAITING":
                 statuses = List.of("WAITING");
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId, statuses));
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId, statuses));
             case "REJECTED":
                 statuses = List.of("REJECTED");
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerId(userId, statuses));
+                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId, statuses));
 
             default:
                 throw new ValidationException500("Unknown state: UNSUPPORTED_STATUS");
