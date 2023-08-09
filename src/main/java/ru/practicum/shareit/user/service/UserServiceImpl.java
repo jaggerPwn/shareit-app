@@ -3,15 +3,17 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dto.UserDTO;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.ValidationException404;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.validation.UserValidator;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,39 +21,48 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository repository;
 
+    @PersistenceContext
+    private final EntityManager entityManager;
+
     @Override
-    public List<UserDTO> getAllUsers() {
-        Map<Integer, User> all = repository.findAll();
-        List<User> collectUsers = new ArrayList<>(all.values());
-        return UserMapper.userToDtoList(collectUsers);
+    public List<UserDto> getAllUsers() {
+        List<User> users = repository.findAll();
+        return UserMapper.userToDtoList(users);
     }
 
     @Override
-    public UserDTO saveUser(UserDTO userDTO) {
-        User user = UserMapper.dtoToUser(userDTO);
-        UserValidator.validateForDuplicateMail(userDTO, getAllUsers());
-        return repository.save(user);
+    public UserDto saveUser(UserDto userDTO) {
+        Optional<User> userOptional = repository.findById(userDTO.getId());
+        if (userOptional.isPresent()) {
+            User userFromDb = userOptional.get();
+            if (userDTO.getEmail() == null) {
+                userDTO.setEmail(userFromDb.getEmail());
+            }
+            if (userDTO.getName() == null) {
+                userDTO.setName(userFromDb.getName());
+            }
+        }
+        return UserMapper.userToDto(repository.save(UserMapper.dtoToUser(userDTO)));
     }
 
     @Override
-    public UserDTO update(UserDTO userDTO, int id) {
-        userDTO.setId(id);
-        User user = UserMapper.dtoToUser(userDTO);
-        return repository.update(user, id);
-    }
-
-    @Override
-    public UserDTO getUserById(int id) {
-        return repository.getUserById(id);
+    public UserDto getUserById(int id) {
+        return UserMapper.userToDto(repository.findById(id)
+                .orElseThrow(() -> new ValidationException404("user " + id + "not found")));
     }
 
     @Override
     public void deleteUserById(int id) {
-        repository.deleteUserById(id);
+        repository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void deleteUsers() {
-        repository.deleteUsers();
+        repository.deleteAll();
+        entityManager
+                .createNativeQuery("ALTER TABLE  USERS  ALTER COLUMN ID  RESTART WITH 1;")
+                .executeUpdate();
+
     }
 }

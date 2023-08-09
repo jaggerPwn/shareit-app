@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class UserDto {
     private int id;
     @NotEmpty(message = "Name may not be null")
     @Email(regexp = ".+@.+\\..+|")

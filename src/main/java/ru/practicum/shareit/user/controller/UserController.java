@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDTO;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
@@ -15,23 +15,24 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDTO> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable int id) {
+    public UserDto getUserById(@PathVariable int id) {
         return userService.getUserById(id);
     }
 
     @PostMapping
-    public UserDTO saveNewUser(@Valid @RequestBody UserDTO userDTO) {
+    public UserDto saveNewUser(@Valid @RequestBody UserDto userDTO) {
         return userService.saveUser(userDTO);
     }
 
     @PatchMapping("/{id}")
-    public UserDTO put(@RequestBody UserDTO userDTO, @PathVariable int id) {
-        return userService.update(userDTO, id);
+    public UserDto put(@RequestBody UserDto userDTO, @PathVariable int id) {
+        userDTO.setId(id);
+        return userService.saveUser(userDTO);
     }
 
     @DeleteMapping("/{id}")
