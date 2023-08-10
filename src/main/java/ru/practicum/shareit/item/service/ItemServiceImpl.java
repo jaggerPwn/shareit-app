@@ -87,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemsByUser(int userId) {
+    public List<ItemDto> getItemsByUser(int userId, Integer size) {
         UserValidator.validateIfUserExists(userId, userRepository);
         List<ItemDto> itemDtos = ItemMapper.itemToDtoList(itemRepository.findByUserIdOrderByIdAsc(userId));
         for (ItemDto itemDto : itemDtos) {
