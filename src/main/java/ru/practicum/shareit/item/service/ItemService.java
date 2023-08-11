@@ -13,7 +13,7 @@ public interface ItemService {
 
     ItemDto getItem(int itemId, int userId);
 
-    List<ItemDto> getItemsByUser(int userId, Integer size);
+    List<ItemDto> getItemsByUser(int userId, Integer size, Integer from);
 
     List<ItemDto> searchItem(String text);
 

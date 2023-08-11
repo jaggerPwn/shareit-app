@@ -2,6 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
@@ -26,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,13 +92,34 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemsByUser(int userId, Integer size) {
+    public List<ItemDto> getItemsByUser(int userId, Integer size, Integer from) {
         UserValidator.validateIfUserExists(userId, userRepository);
-        List<ItemDto> itemDtos = ItemMapper.itemToDtoList(itemRepository.findByUserIdOrderByIdAsc(userId));
+
+        List<Item> itemsList;
+        if (size != null && from != null) {
+            itemsList = getItemsAsPage(userId, size, from);
+        } else {
+            itemsList = itemRepository.findByUserIdOrderByIdAsc(userId);
+        }
+
+        List<ItemDto> itemDtos = ItemMapper.itemToDtoList(itemsList);
+
         for (ItemDto itemDto : itemDtos) {
             tryToAddNextAndLastBooking(itemDto.getId(), userId, itemDto);
         }
         return itemDtos;
+    }
+
+    @NotNull
+    private List<Item> getItemsAsPage(int userId, Integer size, Integer from) {
+        Pageable pageRequest = createPageRequestUsing(from, size);
+        Page<Item> itemsPage = itemRepository.findByUserIdOrderByIdAsc(userId, pageRequest);
+        return itemsPage.stream()
+                .collect(Collectors.toList());
+    }
+
+    private Pageable createPageRequestUsing(int page, int size) {
+        return PageRequest.of(page, size);
     }
 
     @Override

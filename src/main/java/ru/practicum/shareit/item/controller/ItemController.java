@@ -34,8 +34,10 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsByUser(@RequestHeader("X-Sharer-User-Id") int userId,
-                                        @RequestParam(name = "size", required = false) Integer size) {
-        return itemService.getItemsByUser(userId, size);
+                                     @RequestParam(name = "size", required = false) Integer size,
+                                        @RequestParam(name = "from", required = false) Integer from
+    ) {
+        return itemService.getItemsByUser(userId, size, from);
     }
 
     @GetMapping("/search")

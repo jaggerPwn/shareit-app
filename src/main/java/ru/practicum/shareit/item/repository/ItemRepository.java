@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findByUserIdOrderByIdAsc(int userId);
-    Page<Item> findByUserIdOrderByIdAsc(Long userId, Pageable pageable);
+    Page<Item> findByUserIdOrderByIdAsc(int userId, Pageable pageable);
 
     List<Item> findByDescriptionContainingIgnoreCaseAndAvailableTrue(String description);
 }
