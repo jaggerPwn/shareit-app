@@ -26,4 +26,6 @@ public interface ItemService {
     CommentDto saveComment(CommentDto commentDto, int itemId, int userId);
 
     void deleteComments();
+
+    List<ItemDto> getItemByRequestId(int requestId);
 }

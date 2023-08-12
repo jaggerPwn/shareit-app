@@ -6,6 +6,7 @@ import ru.practicum.shareit.exception.ValidationException409;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Optional;
 
@@ -24,8 +25,8 @@ public class UserValidator {
         log.debug("User validation is successful");
     }
 
-    public static void validateIfUserExists(int userId, UserRepository userRepository) {
-        if (!userRepository.existsById(userId))
+    public static void validateIfUserExists(int userId, UserService userService) {
+        if (userService.getUserById(userId) == null)
             throw new ValidationException404("User " + userId + " doesn't exists");
     }
 }

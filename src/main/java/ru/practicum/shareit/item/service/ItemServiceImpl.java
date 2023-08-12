@@ -21,8 +21,10 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.validation.ItemValidator;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.validation.UserValidator;
 
 import javax.persistence.EntityManager;
@@ -39,7 +41,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final BookingService bookingService;
 
     @PersistenceContext
@@ -49,9 +51,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto saveItem(ItemDto itemDto, int userId) {
         ItemValidator.saveValidation(itemDto);
         Item item = ItemMapper.dtoToItem(itemDto);
-        Optional<User> existingUserFromRepository = userRepository.findById(userId);
-        item.setUser(existingUserFromRepository.orElseThrow(() -> new ValidationException404("user  " + userId +
-                " not found")));
+        UserDto existingUserFromRepository = userService.getUserById(userId);
+        item.setUser(UserMapper.dtoToUser(existingUserFromRepository));
         itemRepository.save(item);
         return ItemMapper.itemToDto(itemRepository.findById(item.getId()).orElseThrow(() ->
                 new ValidationException404("item  " + item.getId() + " not found")));
@@ -62,9 +63,8 @@ public class ItemServiceImpl implements ItemService {
         ItemValidator.updateValidation(itemDto, itemId, userId, itemRepository);
         Item itemNew = ItemMapper.dtoToItem(itemDto);
         itemDto.setId(itemId);
-        Optional<User> existingUserFromRepository = userRepository.findById(userId);
-        itemNew.setUser(existingUserFromRepository.orElseThrow(() -> new ValidationException404("user  " + userId +
-                " not found")));
+        UserDto existingUserFromRepository = userService.getUserById(userId);
+        itemNew.setUser(UserMapper.dtoToUser(existingUserFromRepository));
         Optional<Item> existingItemFromRepository = itemRepository.findById(itemId);
         if (existingItemFromRepository.isEmpty()) throw new ValidationException404("itemNew  " + itemId +
                 " not found");
@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(int itemId, int userId) {
-        UserValidator.validateIfUserExists(userId, userRepository);
+        UserValidator.validateIfUserExists(userId, userService);
 
         ItemDto itemDto = ItemMapper.itemToDto(itemRepository.findById(itemId).orElseThrow(() ->
                 new ValidationException404("item  " + itemId + " not found")));
@@ -93,7 +93,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsByUser(int userId, Integer size, Integer from) {
-        UserValidator.validateIfUserExists(userId, userRepository);
+        UserValidator.validateIfUserExists(userId, userService);
 
         List<Item> itemsList;
         if (size != null && from != null) {
@@ -159,8 +159,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ValidationException404("item not found " + itemId));
         comment.setItem(item);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ValidationException404("user not found " + userId));
+        User user = UserMapper.dtoToUser(userService.getUserById(userId));
         comment.setUser(user);
         comment = commentRepository.save(comment);
         return CommentMapper.commentToCommentDto(comment);
@@ -173,6 +172,17 @@ public class ItemServiceImpl implements ItemService {
         entityManager
                 .createNativeQuery("ALTER TABLE COMMENTS ALTER COLUMN ID  RESTART WITH 1;")
                 .executeUpdate();
+    }
+
+    @Override
+    public List<ItemDto> getItemByRequestId(int requestId) {
+        List<Item> allByRequestId = null;
+        try {
+            allByRequestId = itemRepository.findAllByRequestId(requestId);
+        } catch (Exception e) {
+            log.debug(e.getMessage() + " items for request " + requestId + " not found");
+        }
+        return ItemMapper.itemToDtoList(allByRequestId);
     }
 
     private void tryToAddNextAndLastBooking(int itemId, int userId, ItemDto itemDto) {

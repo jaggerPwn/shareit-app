@@ -12,4 +12,6 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     Page<Item> findByUserIdOrderByIdAsc(int userId, Pageable pageable);
 
     List<Item> findByDescriptionContainingIgnoreCaseAndAvailableTrue(String description);
+
+    List<Item> findAllByRequestId(int requestId);
 }
