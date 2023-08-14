@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIdAndBooker;
@@ -28,6 +31,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -126,26 +130,55 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingWithItemDto> findAllByBookerId(int userId, String status) {
+    public List<BookingWithItemDto> findAllByBookerId(int userId, String status, Integer size, Integer from) {
         BookingValidation.validateIfUserExists(userId, userService);
+
+        List<BookingWithItemDto> bookingsList;
+        int page;
+        if (size != null && from != null) {
+            if (size < 0 || from < 0) throw new ValidationException400("from or size can not be negative");
+            page = from / size;
+            Page<Booking> bookingsPage = getBookerBookingDtos(userId, status, size, page);
+            bookingsList = BookingMapper.bookingToDtoList(bookingsPage.stream().collect(Collectors.toList()));
+        } else {
+            size = 100;
+            page = 0;
+            Page<Booking> bookingsPage = getBookerBookingDtos(userId, status, size, page);
+            bookingsList = BookingMapper.bookingToDtoList(bookingsPage.stream().collect(Collectors.toList()));
+        }
+        return bookingsList;
+    }
+
+    private Pageable createPageRequestUsing(int page, int size) {
+        return PageRequest.of(page, size);
+    }
+
+    private Page<Booking> getBookerBookingDtos(int userId, String status, Integer size, Integer from) {
+        Pageable pageRequest = createPageRequestUsing(from, size);
 
         String statuses;
         if (status == null) status = "All";
         switch (status) {
             case "ALL":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdOrderByIdDesc(userId));
+                return bookingRepository.findAllByUserIdOrderByIdDesc(userId,
+                        pageRequest);
             case "FUTURE":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInFuture(userId));
+                return bookingRepository.findAllByBookerIdInFuture(userId,
+                        pageRequest);
             case "PAST":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInPast(userId));
+                return bookingRepository.findAllByBookerIdInPast(userId,
+                        pageRequest);
             case "CURRENT":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByBookerIdInCurrent(userId));
+                return bookingRepository.findAllByBookerIdInCurrent(userId,
+                        pageRequest);
             case "WAITING":
                 statuses = "WAITING";
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId, statuses));
+                return bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId,
+                        statuses, pageRequest);
             case "REJECTED":
                 statuses = "REJECTED";
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId, statuses));
+                return bookingRepository.findAllByUserIdAndStatusOrderByIdDesc(userId,
+                        statuses, pageRequest);
 
             default:
                 throw new ValidationException500("Unknown state: UNSUPPORTED_STATUS");
@@ -153,24 +186,43 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingWithItemDto> findAllByOwnerId(int userId, String status) {
+    public List<BookingWithItemDto> findAllByOwnerId(int userId, String status, Integer size, Integer from) {
         BookingValidation.validateIfUserExists(userId, userService);
+        List<BookingWithItemDto> bookingsList;
+        int page;
+
+        if (size != null && from != null) {
+            if (size < 0 || from < 0) throw new ValidationException400("from or size can not be negative");
+            page = from / size;
+            Page<Booking> bookingsPage = getOwnerBookingsDto(userId, status, size, page);
+            bookingsList = BookingMapper.bookingToDtoList(bookingsPage.stream().collect(Collectors.toList()));
+        } else {
+            size = 100;
+            page = 0;
+            Page<Booking> bookingsPage = getOwnerBookingsDto(userId, status, size, page);
+            bookingsList = BookingMapper.bookingToDtoList(bookingsPage.stream().collect(Collectors.toList()));
+        }
+        return bookingsList;
+    }
+
+    private Page<Booking> getOwnerBookingsDto(int userId, String status, Integer size, Integer from) {
         String statuses;
+        Pageable pageRequest = createPageRequestUsing(from, size);
         switch (status) {
             case "ALL":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId));
+                return bookingRepository.findAllByOwnerId(userId, pageRequest);
             case "FUTURE":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInFuture(userId));
+                return bookingRepository.findAllByOwnerIdInFuture(userId, pageRequest);
             case "PAST":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInPast(userId));
+                return bookingRepository.findAllByOwnerIdInPast(userId, pageRequest);
             case "CURRENT":
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerIdInCurrent(userId));
+                return bookingRepository.findAllByOwnerIdInCurrent(userId, pageRequest);
             case "WAITING":
                 statuses = "WAITING";
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
+                return bookingRepository.findAllByOwnerId(userId, statuses, pageRequest);
             case "REJECTED":
                 statuses = "REJECTED";
-                return BookingMapper.bookingToDtoList(bookingRepository.findAllByOwnerId(userId, statuses));
+                return bookingRepository.findAllByOwnerId(userId, statuses, pageRequest);
             default:
                 throw new ValidationException500("Unknown state: UNSUPPORTED_STATUS");
         }

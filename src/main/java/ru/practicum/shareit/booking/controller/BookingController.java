@@ -35,16 +35,20 @@ public class BookingController {
     @GetMapping
     public List<BookingWithItemDto> findAllBookingByBookerIdAndState(
             @RequestParam(name = "state", defaultValue = "ALL", required = false) String status,
-            @RequestHeader("X-Sharer-User-Id") int userId) {
-        return bookingService.findAllByBookerId(userId, status);
+            @RequestHeader("X-Sharer-User-Id") int userId,
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "from", required = false) Integer from) {
+        return bookingService.findAllByBookerId(userId, status, size, from);
     }
 
 
     @GetMapping("/owner")
     public List<BookingWithItemDto> findAllBookingsByOwnerIdAndState(
             @RequestParam(name = "state", defaultValue = "ALL", required = false) String status,
-            @RequestHeader("X-Sharer-User-Id") int userId) {
-        return bookingService.findAllByOwnerId(userId, status);
+            @RequestHeader("X-Sharer-User-Id") int userId,
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "from", required = false) Integer from) {
+        return bookingService.findAllByOwnerId(userId, status, size, from);
     }
 
     @DeleteMapping

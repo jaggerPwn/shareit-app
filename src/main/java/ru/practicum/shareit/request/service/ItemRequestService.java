@@ -8,7 +8,11 @@ public interface ItemRequestService {
 
     ItemRequestDto saveRequest(ItemRequestDto itemRequestDto, int userId);
 
-    List<ItemRequestDto> getAllRequestsOfRequestor(int userId);
+    List<ItemRequestDto> getRequestsOfRequestor(int userId);
 
-    List<ItemRequestDto> getRequestPage(int userId, Integer size, Integer from);
+    List<ItemRequestDto> getAllRequestPage(int userId, Integer size, Integer from);
+
+    ItemRequestDto getRequestById(int id, int userId);
+
+    void deleteAll();
 }

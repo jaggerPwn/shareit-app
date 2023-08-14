@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS items (
   request_id BIGINT,
   CONSTRAINT pk_user_2 PRIMARY KEY (id),
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT fk_request FOREIGN KEY (request_id) REFERENCES requests(id)
+  CONSTRAINT fk_request FOREIGN KEY (request_id) REFERENCES requests(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS bookings (

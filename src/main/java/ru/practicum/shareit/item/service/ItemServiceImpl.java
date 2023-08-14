@@ -43,7 +43,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final BookingService bookingService;
-
     @PersistenceContext
     EntityManager entityManager;
 

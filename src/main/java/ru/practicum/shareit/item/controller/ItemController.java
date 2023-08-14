@@ -34,7 +34,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsByUser(@RequestHeader("X-Sharer-User-Id") int userId,
-                                     @RequestParam(name = "size", required = false) Integer size,
+                                        @RequestParam(name = "size", required = false) Integer size,
                                         @RequestParam(name = "from", required = false) Integer from
     ) {
         return itemService.getItemsByUser(userId, size, from);
@@ -51,7 +51,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto saveComment(@Valid @RequestBody CommentDto commentDto, @PathVariable int itemId, @RequestHeader("X-Sharer-User-Id") int userId) {
+    public CommentDto saveComment(@Valid @RequestBody CommentDto commentDto,
+                                  @PathVariable int itemId,
+                                  @RequestHeader("X-Sharer-User-Id") int userId) {
         return itemService.saveComment(commentDto, itemId, userId);
     }
 

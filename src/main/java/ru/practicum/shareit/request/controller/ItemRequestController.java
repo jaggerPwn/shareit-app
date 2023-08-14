@@ -8,9 +8,6 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
@@ -20,7 +17,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto saveRequest(@Valid @RequestBody ItemRequestDto itemRequestDto
-            , @RequestHeader("X-Sharer-User-Id") int userId){
+            , @RequestHeader("X-Sharer-User-Id") int userId) {
         ItemRequestDto itemRequestDto1 = itemRequestService.saveRequest(itemRequestDto, userId);
         return itemRequestDto1;
     }
@@ -28,11 +25,22 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestDto> getRequestPage(@RequestHeader("X-Sharer-User-Id") int userId,
                                                @RequestParam(name = "size", required = false) Integer size,
-                                               @RequestParam(name = "from", required = false) Integer from){
-       return itemRequestService.getRequestPage(userId, size, from);
+                                               @RequestParam(name = "from", required = false) Integer from) {
+        return itemRequestService.getAllRequestPage(userId, size, from);
     }
+
     @GetMapping
-    public List<ItemRequestDto> getRequestsOfRequestor(@RequestHeader("X-Sharer-User-Id") int userId){
-        return itemRequestService.getAllRequestsOfRequestor(userId);
+    public List<ItemRequestDto> getRequestsOfRequestor(@RequestHeader("X-Sharer-User-Id") int userId) {
+        return itemRequestService.getRequestsOfRequestor(userId);
+    }
+
+    @GetMapping("/{id}")
+    public ItemRequestDto getRequestById(@PathVariable int id, @RequestHeader("X-Sharer-User-Id") int userId) {
+    return itemRequestService.getRequestById(id, userId);
+    }
+
+    @DeleteMapping
+    public void deleteAllRequests(){
+        itemRequestService.deleteAll();
     }
 }

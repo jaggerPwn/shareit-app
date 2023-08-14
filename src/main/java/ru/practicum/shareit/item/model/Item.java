@@ -23,5 +23,5 @@ public class Item {
     @ToString.Exclude
     private User user;
     @Nullable
-    private int requestId;
+    private Integer requestId;
 }
