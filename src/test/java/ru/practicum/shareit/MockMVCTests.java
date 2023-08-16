@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.lang.reflect.Type;
@@ -23,8 +25,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @SpringBootTest
-class ShareItTests {
+//@WebMvcTest
+class MockMVCTests {
+
     private MockMvc mockMvc;
+    @Autowired
     ObjectMapper objectMapper;
 
     @Autowired
