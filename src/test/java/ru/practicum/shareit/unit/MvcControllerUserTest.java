@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -14,16 +14,12 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.mockito.Mockito.when;
 
 @WebMvcTest(UserController.class)
-public class WebMockUserLayer {
+public class MvcControllerUserTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,7 +32,8 @@ public class WebMockUserLayer {
     public void userCreationTest() throws Exception {
         UserDto rick = UserDto.builder().name("rick").email("ggg@ggg.ru").build();
         when(service.saveUser(rick)).thenReturn(rick);
-        MvcResult mvcResult = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(rick))).andDo(print()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(rick))).andDo(print()).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         System.out.println(contentAsString);
 

@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,8 +16,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.controller.UserController;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +23,7 @@ import java.util.List;
 
 @SpringBootTest
 //@WebMvcTest
-class MockMVCTests {
+class ItemMVCTests {
 
     private MockMvc mockMvc;
     @Autowired
@@ -47,40 +44,6 @@ class MockMVCTests {
     public void tearDown() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/items"));
         mockMvc.perform(MockMvcRequestBuilders.delete("/users"));
-    }
-
-    @Test
-    public void addUserAndGetUser() throws Exception {
-        addTwoUsers();
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/users/1")).andReturn();
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        UserDto user = objectMapper.readValue(contentAsString, UserDto.class);
-        Assertions.assertEquals(user.getId(), 1);
-        Assertions.assertEquals(user.getEmail(), "user@user.com");
-    }
-
-    @Test
-    public void updateUser() throws Exception {
-        addTwoUsers();
-        String jsonStr = "{\"name\":\"name updated\"}";
-        MvcResult mvcResult2 = mockMvc.perform(MockMvcRequestBuilders.patch("/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonStr.getBytes()))
-                .andExpect(MockMvcResultMatchers.status()
-                        .isOk())
-                .andReturn();
-        String contentAsString2 = mvcResult2.getResponse().getContentAsString();
-        UserDto user = objectMapper.readValue(contentAsString2, UserDto.class);
-        Assertions.assertEquals(user.getName(), "name updated");
-    }
-
-    @Test
-    public void deleteUser() throws Exception {
-        addTwoUsers();
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/1"));
-        MvcResult mvcResult2 = mockMvc.perform(MockMvcRequestBuilders.get("/users/1")).andReturn();
-        String contentAsString2 = mvcResult2.getResponse().getContentAsString();
-        Assertions.assertEquals(contentAsString2, "{\"error\":\"user 1not found\"}");
     }
 
     @Test
