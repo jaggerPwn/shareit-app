@@ -27,8 +27,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.validation.UserValidator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +41,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final BookingService bookingService;
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Override
     public ItemDto saveItem(ItemDto itemDto, int userId) {
@@ -131,9 +127,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteItems() {
         itemRepository.deleteAll();
-        entityManager
-                .createNativeQuery("ALTER TABLE  ITEMS ALTER COLUMN ID  RESTART WITH 1;")
-                .executeUpdate();
+itemRepository.setIdtoOne();
     }
 
     @Override
@@ -168,9 +162,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteComments() {
         commentRepository.deleteAll();
-        entityManager
-                .createNativeQuery("ALTER TABLE COMMENTS ALTER COLUMN ID  RESTART WITH 1;")
-                .executeUpdate();
+        commentRepository.setCommetIdToOne();
     }
 
     @Override

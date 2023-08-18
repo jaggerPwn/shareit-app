@@ -19,8 +19,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.validation.UserValidator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +30,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final UserService userService;
     private final ItemService itemService;
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Override
     @Transactional
@@ -89,9 +85,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public void deleteAll() {
         itemRequestRepository.deleteAll();
-        entityManager
-                .createNativeQuery("ALTER TABLE REQUESTS ALTER COLUMN ID  RESTART WITH 1;")
-                .executeUpdate();
+        itemRequestRepository.alterTableSetFromBeginig();
     }
 
     private Pageable createPageRequestUsing(int page, int size) {

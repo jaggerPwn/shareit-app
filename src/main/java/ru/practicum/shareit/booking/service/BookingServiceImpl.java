@@ -27,7 +27,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,11 +45,7 @@ public class BookingServiceImpl implements BookingService {
         this.bookingRepository = bookingRepository;
         this.userService = userService;
         this.itemService = itemService;
-        this.entityManager = entityManager;
     }
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Transactional
     @Override
@@ -77,9 +72,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void deleteAll() {
         bookingRepository.deleteAll();
-        entityManager
-                .createNativeQuery("ALTER TABLE  BOOKINGS  ALTER COLUMN ID  RESTART WITH 1;")
-                .executeUpdate();
+        bookingRepository.setbookingsIdToOne();
     }
 
     @Override

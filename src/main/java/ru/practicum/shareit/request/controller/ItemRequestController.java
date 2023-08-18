@@ -18,8 +18,7 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto saveRequest(@Valid @RequestBody ItemRequestDto itemRequestDto
             , @RequestHeader("X-Sharer-User-Id") int userId) {
-        ItemRequestDto itemRequestDto1 = itemRequestService.saveRequest(itemRequestDto, userId);
-        return itemRequestDto1;
+        return itemRequestService.saveRequest(itemRequestDto, userId);
     }
 
     @GetMapping("/all")
