@@ -54,7 +54,7 @@ public class BookingNarrowUnitMockTests {
     @BeforeEach
     void init() {
         session = Mockito.mockitoSession().initMocks(this).startMocking();
-        userService = new UserServiceImpl(mockUserRepository, entityManager);
+        userService = new UserServiceImpl(mockUserRepository);
         itemService = new ItemServiceImpl(mockItemRepository, mockCommentRepository, userService, bookingService);
         bookingService = new BookingServiceImpl(mockBookingRepository, userService, itemService,entityManager);
     }

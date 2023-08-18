@@ -42,7 +42,7 @@ public class UserNarrowUnitMockTests {
     @BeforeEach
     void init() {
         session = Mockito.mockitoSession().initMocks(this).startMocking();
-        userService = new UserServiceImpl(mockRepository, entityManager);
+        userService = new UserServiceImpl(mockRepository);
     }
 
     @AfterEach
