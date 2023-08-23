@@ -10,8 +10,6 @@ import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +18,6 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository repository;
-
-    @PersistenceContext
-    private final EntityManager entityManager;
 
     @Override
     public List<UserDto> getAllUsers() {
@@ -60,9 +55,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUsers() {
         repository.deleteAll();
-        entityManager
-                .createNativeQuery("ALTER TABLE  USERS  ALTER COLUMN ID  RESTART WITH 1;")
-                .executeUpdate();
+        repository.setUserIdToOne();
 
     }
 }

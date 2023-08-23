@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -21,4 +22,6 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User user;
+    @Nullable
+    private Integer requestId;
 }

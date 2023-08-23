@@ -1,7 +1,8 @@
 package ru.practicum.shareit.booking.model;
 
+import javax.validation.constraints.NotNull;
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
+
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 

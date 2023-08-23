@@ -13,7 +13,7 @@ public interface ItemService {
 
     ItemDto getItem(int itemId, int userId);
 
-    List<ItemDto> getItemsByUser(int userId);
+    List<ItemDto> getItemsByUser(int userId, Integer size, Integer from);
 
     List<ItemDto> searchItem(String text);
 
@@ -26,4 +26,6 @@ public interface ItemService {
     CommentDto saveComment(CommentDto commentDto, int itemId, int userId);
 
     void deleteComments();
+
+    List<ItemDto> getItemByRequestId(int requestId);
 }

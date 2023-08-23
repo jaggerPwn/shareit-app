@@ -19,7 +19,7 @@ services:
       - "9090:9090"
     depends_on: db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareitprod
 
   db:
     image: postgres:13.7-alpine
@@ -29,7 +29,7 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     environment:
-      - DB_NAME=shareit
+      - DB_NAME=shareitprod
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - DB_HOST=db
