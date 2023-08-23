@@ -16,9 +16,9 @@ public interface BookingService {
 
     BookingWithItemDto findById(int bookingId, int userId);
 
-    List<BookingWithItemDto> findAllByBookerId(int userId, String status);
+    List<BookingWithItemDto> findAllByBookerId(int userId, String status, Integer size, Integer from);
 
-    List<BookingWithItemDto> findAllByOwnerId(int userId, String status);
+    List<BookingWithItemDto> findAllByOwnerId(int userId, String status, Integer size, Integer from);
 
     List<BookingDtoIdAndBooker> findNextAndLastBookingByItemId(int itemId, int userId, ItemDto itemDto);
 

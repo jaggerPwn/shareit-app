@@ -1,27 +1,26 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
 import lombok.*;
-import org.springframework.lang.Nullable;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
-@Builder
-@Entity
-@Table(name = "items", schema = "public")
-@NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+@NoArgsConstructor
+@Entity
+@Table(name = "requests", schema = "public")
+@Builder
+public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
     private String description;
-    private Boolean available;
+    @CreationTimestamp
+    private LocalDateTime created;
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User user;
-    @Nullable
-    private Integer requestId;
 }

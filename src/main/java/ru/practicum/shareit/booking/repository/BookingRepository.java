@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
@@ -8,25 +11,26 @@ import ru.practicum.shareit.booking.model.Booking;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    List<Booking> findAllByUserIdOrderByIdDesc(int userId);
-    List<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId, String status);
+    Page<Booking> findAllByUserIdOrderByIdDesc(int userId, Pageable pageable);
+
+    Page<Booking> findAllByUserIdAndStatusOrderByIdDesc(int userId, String status, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
-            "JOIN FETCH b.item as i " +
-            "JOIN FETCH i.user as u " +
+            "JOIN b.item as i " +
+            "JOIN i.user as u " +
             "where u.id = ?1 " +
             "and b.status in ?2 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerId(int userId, String status);
+    Page<Booking> findAllByOwnerId(int userId, String status, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH i.user u " +
+            "JOIN b.item i " +
+            "JOIN i.user u " +
             "where u.id = ?1 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerId(int userId);
+    Page<Booking> findAllByOwnerId(int userId, Pageable pageable);
 
     @Query("select b1 " +
             "from Booking as b1 " +
@@ -34,7 +38,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(select (min(b.start)) as s " +
             "from Booking b " +
             "JOIN b.item i " +
-            "where i.id  = ?1 " +
+            "where i.id = ?1 " +
             "and b.start >= current_timestamp " +
             "and b.status = 'APPROVED')"
     )
@@ -46,7 +50,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(select (max(b.end)) as s " +
             "from Booking b " +
             "JOIN b.item i " +
-            "where i.id  = ?1 " +
+            "where i.id = ?1 " +
             "and b.start < current_timestamp " +
             "and b.status = 'APPROVED')"
     )
@@ -54,9 +58,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query(" select b " +
             "from Booking as b " +
-            "JOIN  b.item i " +
-            "JOIN  b.user u " +
-            "where u.id =  :booker_id " +
+            "JOIN b.item i " +
+            "JOIN b.user u " +
+            "where u.id = :booker_id " +
             "and i.id = :item_id " +
             "and b.status = 'APPROVED' " +
             "and b.start < current_timestamp " +
@@ -65,56 +69,60 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query(" select b " +
             "from Booking as b " +
-            "JOIN  b.user u " +
-            "where u.id =  :booker_id " +
+            "JOIN b.user u " +
+            "where u.id = :booker_id " +
             "and b.start >= current_timestamp " +
             "order by b.start desc")
-    List<Booking> findAllByBookerIdInFuture(@Param("booker_id") int userId);
+    Page<Booking> findAllByBookerIdInFuture(@Param("booker_id") int userId, Pageable pageable);
 
     @Query(" select b " +
             "from Booking as b " +
-            "JOIN  b.user u " +
-            "where u.id =  :booker_id " +
+            "JOIN b.user u " +
+            "where u.id = :booker_id " +
             "and b.end <= current_timestamp " +
             "order by b.start desc")
-    List<Booking> findAllByBookerIdInPast(@Param("booker_id") int userId);
+    Page<Booking> findAllByBookerIdInPast(@Param("booker_id") int userId, Pageable pageable);
 
     @Query(" select b " +
             "from Booking as b " +
-            "JOIN  b.user u " +
-            "where u.id =  :booker_id " +
+            "JOIN b.user u " +
+            "where u.id = :booker_id " +
             "and b.start <= current_timestamp " +
             "and b.end >= current_timestamp " +
             "order by b.start desc")
-    List<Booking> findAllByBookerIdInCurrent(@Param("booker_id") int userId);
+    Page<Booking> findAllByBookerIdInCurrent(@Param("booker_id") int userId, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH i.user u " +
+            "JOIN b.item i " +
+            "JOIN i.user u " +
             "where u.id = :owner_id " +
             "and b.start >= current_timestamp " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerIdInFuture(@Param("owner_id") int userId);
+    Page<Booking> findAllByOwnerIdInFuture(@Param("owner_id") int userId, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH i.user u " +
+            "JOIN b.item i " +
+            "JOIN i.user u " +
             "where u.id = :owner_id " +
             "and b.end <= current_timestamp " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerIdInPast(@Param("owner_id") int userId);
+    Page<Booking> findAllByOwnerIdInPast(@Param("owner_id") int userId, Pageable pageable);
 
     @Query(" select b " +
             "from Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH i.user u " +
+            "JOIN b.item i " +
+            "JOIN i.user u " +
             "where u.id = :owner_id " +
             "and b.start <= current_timestamp " +
             "and b.end >= current_timestamp " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerIdInCurrent(@Param("owner_id") int userId);
+    Page<Booking> findAllByOwnerIdInCurrent(@Param("owner_id") int userId, Pageable pageable);
 
     List<Booking> findAllByItemId(int itemId);
+
+    @Modifying
+    @Query(value = "ALTER TABLE  BOOKINGS  ALTER COLUMN ID  RESTART WITH 1", nativeQuery = true)
+    void setbookingsIdToOne();
 }
