@@ -22,7 +22,7 @@ public class UserValidator {
                 throw new ValidationException409("Email already in base");
             }
         }
-        log.debug("User validation is successful");
+        log.info("User validation is successful");
     }
 
     public static void validateIfUserExists(int userId, UserService userService) {
