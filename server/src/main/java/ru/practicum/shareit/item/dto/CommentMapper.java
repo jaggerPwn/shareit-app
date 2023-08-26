@@ -24,7 +24,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentDto> ListCommentToCommentDto(List<Comment> comments) {
+    public static List<CommentDto> listCommentToCommentDto(List<Comment> comments) {
         return comments.stream()
                 .map(CommentMapper::commentToCommentDto)
                 .collect(Collectors.toList());

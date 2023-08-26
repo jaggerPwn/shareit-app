@@ -23,8 +23,8 @@ public class ItemRequestMapper {
                 .build();
     }
 
-    public static List<ItemRequestDto> listItemRequestToItemRequestDto(List<ItemRequest> ItemRequests) {
-        return ItemRequests.stream()
+    public static List<ItemRequestDto> listItemRequestToItemRequestDto(List<ItemRequest> itemRequests) {
+        return itemRequests.stream()
                 .map(ItemRequestMapper::itemRequestToItemRequestDto)
                 .collect(Collectors.toList());
     }

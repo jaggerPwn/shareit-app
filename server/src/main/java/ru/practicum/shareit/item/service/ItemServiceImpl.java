@@ -79,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
                 new ValidationException404("item  " + itemId + " not found")));
         tryToAddNextAndLastBooking(itemId, userId, itemDto);
         try {
-            itemDto.setComments(CommentMapper.ListCommentToCommentDto(commentRepository.findAllByItemId(itemId)));
+            itemDto.setComments(CommentMapper.listCommentToCommentDto(commentRepository.findAllByItemId(itemId)));
         } catch (Exception e) {
             log.debug("comment for item " + itemDto + " not found");
         }
