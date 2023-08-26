@@ -127,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteItems() {
         itemRepository.deleteAll();
-itemRepository.setIdtoOne();
+        itemRepository.setIdToOne();
     }
 
     @Override
@@ -162,7 +162,7 @@ itemRepository.setIdtoOne();
     @Transactional
     public void deleteComments() {
         commentRepository.deleteAll();
-        commentRepository.setCommetIdToOne();
+        commentRepository.setCommentIdToOne();
     }
 
     @Override

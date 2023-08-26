@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
 import javax.validation.constraints.NotNull;
+
 import lombok.*;
 
 import ru.practicum.shareit.item.model.Item;

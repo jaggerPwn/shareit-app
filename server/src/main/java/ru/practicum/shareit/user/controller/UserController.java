@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    private void deleteUsers(){
+    private void deleteUsers() {
         userService.deleteUsers();
     }
 }

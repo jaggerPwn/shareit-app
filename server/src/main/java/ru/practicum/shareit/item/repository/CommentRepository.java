@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findAllByItemId(int itemId);
-@Modifying
-@Query(value = "ALTER TABLE COMMENTS ALTER COLUMN ID  RESTART WITH 1", nativeQuery = true)
-    void setCommetIdToOne();
+
+    @Modifying
+    @Query(value = "ALTER TABLE COMMENTS ALTER COLUMN ID  RESTART WITH 1", nativeQuery = true)
+    void setCommentIdToOne();
 }

@@ -11,12 +11,14 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findByUserIdOrderByIdAsc(int userId);
+
     Page<Item> findByUserIdOrderByIdAsc(int userId, Pageable pageable);
 
     List<Item> findByDescriptionContainingIgnoreCaseAndAvailableTrue(String description);
 
     List<Item> findAllByRequestId(int requestId);
-@Modifying
-@Query(value = "ALTER TABLE  ITEMS ALTER COLUMN ID  RESTART WITH 1", nativeQuery = true)
-    void setIdtoOne();
+
+    @Modifying
+    @Query(value = "ALTER TABLE  ITEMS ALTER COLUMN ID  RESTART WITH 1", nativeQuery = true)
+    void setIdToOne();
 }

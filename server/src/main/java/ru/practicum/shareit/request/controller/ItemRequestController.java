@@ -35,11 +35,11 @@ public class ItemRequestController {
 
     @GetMapping("/{id}")
     public ItemRequestDto getRequestById(@PathVariable int id, @RequestHeader("X-Sharer-User-Id") int userId) {
-    return itemRequestService.getRequestById(id, userId);
+        return itemRequestService.getRequestById(id, userId);
     }
 
     @DeleteMapping
-    public void deleteAllRequests(){
+    public void deleteAllRequests() {
         itemRequestService.deleteAll();
     }
 }
