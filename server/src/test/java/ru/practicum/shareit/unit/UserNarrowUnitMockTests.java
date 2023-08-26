@@ -64,7 +64,7 @@ public class UserNarrowUnitMockTests {
     }
 
     @Test
-    void TestMailExists(){
+    void testMailExists() {
         User rick = User.builder().id(1).name("rick").email("ggg@ggg.ru").build();
         User rick2 = User.builder().id(2).name("rick").email("ggg@ggg.ru").build();
         Mockito.when(mockRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(rick));

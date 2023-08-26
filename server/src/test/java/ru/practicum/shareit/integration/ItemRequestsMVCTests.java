@@ -103,7 +103,7 @@ public class ItemRequestsMVCTests {
         String contentAsString = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ItemDto itemDto = objectMapper.readValue(contentAsString, ItemDto.class);
         Assertions.assertEquals(itemDto.getRequestId(), 1);
-         mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/items/2")
+        mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/items/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(MockMvcResultMatchers.status().isOk())
