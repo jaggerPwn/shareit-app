@@ -21,6 +21,7 @@ public class BookingController {
         return bookingService.save(bookingDtoWithStartEndItemId, userId);
     }
 
+
     @PatchMapping("/{id}")
     public BookingWithItemDto ApproveBooking(@PathVariable(value = "id") int bookingId, @RequestParam("approved") boolean accept,
                                              @RequestHeader("X-Sharer-User-Id") int userId) {
