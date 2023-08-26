@@ -23,7 +23,7 @@ public class BookingController {
     public ResponseEntity<Object> saveBooking(
             @Valid @RequestBody BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId,
             @RequestHeader("X-Sharer-User-Id") int userId) {
-        if(bookingDtoWithStartEndItemId.getStart() == null || bookingDtoWithStartEndItemId.getEnd() == null)
+        if (bookingDtoWithStartEndItemId.getStart() == null || bookingDtoWithStartEndItemId.getEnd() == null)
             throw new IllegalArgumentException("Incorrect date of booking");
         if (bookingDtoWithStartEndItemId.getStart().isAfter(bookingDtoWithStartEndItemId.getEnd()))
             throw new IllegalArgumentException("Incorrect date of booking");

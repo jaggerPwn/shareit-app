@@ -18,23 +18,24 @@ import javax.validation.constraints.PositiveOrZero;
 @RequestMapping("/items")
 public class ItemController {
 
-    private final ItemClient ItemClient;
+    private final ItemClient itemClient;
+
     @Validated
     @PostMapping
     public ResponseEntity<Object> saveItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer userId) {
-        return ItemClient.saveItem(itemDto, userId);
+        return itemClient.saveItem(itemDto, userId);
     }
 
     @Validated
     @PatchMapping("{itemId}")
     public ResponseEntity<Object> updateItem(@RequestBody ItemDto itemDto, @PathVariable int itemId,
                                              @RequestHeader("X-Sharer-User-Id") int userId) {
-        return ItemClient.updateItem(itemDto, itemId, userId);
+        return itemClient.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("{itemId}")
     public ResponseEntity<Object> findItem(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId) {
-        return ItemClient.findItem(itemId, userId);
+        return itemClient.findItem(itemId, userId);
     }
 
     @GetMapping
@@ -42,18 +43,18 @@ public class ItemController {
                                                  @Positive @RequestParam(name = "size", defaultValue = "10", required = false) Integer size,
                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0", required = false) Integer from
     ) {
-        return ItemClient.getItemsByUser(userId, size, from);
+        return itemClient.getItemsByUser(userId, size, from);
     }
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchItems(
             @NotNull @RequestParam(required = false) String text) {
-        return ItemClient.searchItem(text);
+        return itemClient.searchItem(text);
     }
 
     @DeleteMapping
     public void deleteItems() {
-        ItemClient.deleteAll();
+        itemClient.deleteAll();
     }
 
     @Validated
@@ -62,12 +63,12 @@ public class ItemController {
                                               @PathVariable int itemId,
                                               @RequestHeader("X-Sharer-User-Id") Integer userId) {
         if (userId == null) throw new IllegalArgumentException("User cant be empty");
-        return ItemClient.saveComment(commentDto, itemId, userId);
+        return itemClient.saveComment(commentDto, itemId, userId);
     }
 
     @DeleteMapping("/comments")
     public void deleteComments() {
-        ItemClient.deleteComments();
+        itemClient.deleteComments();
     }
 
 }
