@@ -31,7 +31,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> ApproveBooking(
+    public ResponseEntity<Object> approveBooking(
             @PathVariable(value = "id") int bookingId,
             @RequestParam("approved") boolean accept,
             @RequestHeader("X-Sharer-User-Id") int userId) {
