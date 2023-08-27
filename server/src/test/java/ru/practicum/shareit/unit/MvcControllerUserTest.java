@@ -26,8 +26,9 @@ public class MvcControllerUserTest {
 
     @MockBean
     private UserService service;
-@Autowired
+    @Autowired
     ObjectMapper mapper;
+
     @Test
     public void userCreationTest() throws Exception {
         UserDto rick = UserDto.builder().name("rick").email("ggg@ggg.ru").build();

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookingMapper {
-    public static Booking BookingDtoWithStartEndItemIdTOBooking
-            (BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId) {
+    public static Booking bookingDtoWithStartEndItemIdTOBooking(
+            BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId) {
         return Booking.builder()
                 .id(bookingDtoWithStartEndItemId.getId())
                 .start(bookingDtoWithStartEndItemId.getStart())
@@ -63,7 +63,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static List<BookingDtoIdAndBooker> ListBookingToDtoIdAndBooker(List<Booking> allByBookerAndItemId) {
+    public static List<BookingDtoIdAndBooker> listBookingToDtoIdAndBooker(List<Booking> allByBookerAndItemId) {
         return allByBookerAndItemId.stream()
                 .map(BookingMapper::bookingToDtoIdAndBooker)
                 .collect(Collectors.toList());

@@ -44,6 +44,7 @@ public class DtoJsonTests {
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("rick");
         assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo("ggg@ggg.ru");
     }
+
     @Test
     void testItemSerialization() throws IOException {
         ItemDto itemDto =
@@ -68,6 +69,7 @@ public class DtoJsonTests {
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("ggg");
         assertThat(result).extractingJsonPathBooleanValue("$.available").isTrue();
     }
+
     @Test
     void bookingItemSerialization() throws IOException {
         BookingWithItemDto bookingWithItemDto =

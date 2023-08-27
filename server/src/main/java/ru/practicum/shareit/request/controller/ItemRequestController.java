@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,8 +15,8 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequestDto saveRequest(@Valid @RequestBody ItemRequestDto itemRequestDto
-            , @RequestHeader("X-Sharer-User-Id") int userId) {
+    public ItemRequestDto saveRequest(@RequestBody ItemRequestDto itemRequestDto,
+                                      @RequestHeader("X-Sharer-User-Id") int userId) {
         return itemRequestService.saveRequest(itemRequestDto, userId);
     }
 
@@ -35,11 +34,11 @@ public class ItemRequestController {
 
     @GetMapping("/{id}")
     public ItemRequestDto getRequestById(@PathVariable int id, @RequestHeader("X-Sharer-User-Id") int userId) {
-    return itemRequestService.getRequestById(id, userId);
+        return itemRequestService.getRequestById(id, userId);
     }
 
     @DeleteMapping
-    public void deleteAllRequests(){
+    public void deleteAllRequests() {
         itemRequestService.deleteAll();
     }
 }

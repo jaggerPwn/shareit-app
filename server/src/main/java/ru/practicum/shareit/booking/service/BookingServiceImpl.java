@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
         Item item = ItemMapper.dtoToItem(item1);
         BookingValidation.validateBookingStartEnd(bookingDtoWithStartEndItemId);
 
-        Booking booking = BookingMapper.BookingDtoWithStartEndItemIdTOBooking(bookingDtoWithStartEndItemId);
+        Booking booking = BookingMapper.bookingDtoWithStartEndItemIdTOBooking(bookingDtoWithStartEndItemId);
         booking.setUser(user);
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING.name());
@@ -241,8 +241,7 @@ public class BookingServiceImpl implements BookingService {
         Booking nextBookingByItemId = null;
         try {
             nextBookingByItemId = bookingRepository.findNextBookingByItemId(itemId);
-            lastAndNextBookings.add
-                    (BookingMapper.bookingToDtoIdAndBooker(nextBookingByItemId));
+            lastAndNextBookings.add(BookingMapper.bookingToDtoIdAndBooker(nextBookingByItemId));
         } catch (
                 Exception e) {
             log.debug("last booking for item " + itemId + " not found");
@@ -253,8 +252,7 @@ public class BookingServiceImpl implements BookingService {
         Booking lastBookingByItemId = null;
         try {
             lastBookingByItemId = bookingRepository.findLastBookingByItemId(itemId);
-            lastAndNextBookings.add
-                    (BookingMapper.bookingToDtoIdAndBooker(lastBookingByItemId));
+            lastAndNextBookings.add(BookingMapper.bookingToDtoIdAndBooker(lastBookingByItemId));
         } catch (Exception e) {
             log.debug("next booking for item " + itemId + " not found");
         }
@@ -267,7 +265,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoIdAndBooker> findAllByBookerAndItemIdAndGoodState(int userId, int itemId) {
-        return BookingMapper.ListBookingToDtoIdAndBooker(bookingRepository.findAllByBookerAndItemId(userId, itemId));
+        return BookingMapper.listBookingToDtoIdAndBooker(bookingRepository.findAllByBookerAndItemId(userId, itemId));
     }
 
 

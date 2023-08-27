@@ -42,6 +42,7 @@ public class RequestClient extends BaseClient {
         );
         return get("/all" + "?from={from}&size={size}", userId, parameters);
     }
+
     public ResponseEntity<Object> getRequestsOfRequestor(Integer userId) {
         return get("/", userId);
     }

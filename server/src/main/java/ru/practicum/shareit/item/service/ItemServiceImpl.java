@@ -26,7 +26,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.validation.UserValidator;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
                 new ValidationException404("item  " + itemId + " not found")));
         tryToAddNextAndLastBooking(itemId, userId, itemDto);
         try {
-            itemDto.setComments(CommentMapper.ListCommentToCommentDto(commentRepository.findAllByItemId(itemId)));
+            itemDto.setComments(CommentMapper.listCommentToCommentDto(commentRepository.findAllByItemId(itemId)));
         } catch (Exception e) {
             log.debug("comment for item " + itemDto + " not found");
         }
@@ -105,7 +104,6 @@ public class ItemServiceImpl implements ItemService {
         return itemDtos;
     }
 
-    @NotNull
     private List<Item> getItemsAsPage(int userId, Integer size, Integer from) {
         Pageable pageRequest = createPageRequestUsing(from, size);
         Page<Item> itemsPage = itemRepository.findByUserIdOrderByIdAsc(userId, pageRequest);
@@ -127,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteItems() {
         itemRepository.deleteAll();
-itemRepository.setIdtoOne();
+        itemRepository.setIdToOne();
     }
 
     @Override
@@ -162,7 +160,7 @@ itemRepository.setIdtoOne();
     @Transactional
     public void deleteComments() {
         commentRepository.deleteAll();
-        commentRepository.setCommetIdToOne();
+        commentRepository.setCommentIdToOne();
     }
 
     @Override

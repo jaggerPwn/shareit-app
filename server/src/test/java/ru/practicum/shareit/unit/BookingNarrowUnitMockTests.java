@@ -56,7 +56,7 @@ public class BookingNarrowUnitMockTests {
         session = Mockito.mockitoSession().initMocks(this).startMocking();
         userService = new UserServiceImpl(mockUserRepository);
         itemService = new ItemServiceImpl(mockItemRepository, mockCommentRepository, userService, bookingService);
-        bookingService = new BookingServiceImpl(mockBookingRepository, userService, itemService,entityManager);
+        bookingService = new BookingServiceImpl(mockBookingRepository, userService, itemService, entityManager);
     }
 
     @AfterEach
@@ -76,7 +76,7 @@ public class BookingNarrowUnitMockTests {
     }
 
     @Test
-    void TestMailExists() {
+    void testMailExists() {
         User rick = User.builder().id(1).name("rick").email("ggg@ggg.ru").build();
         User rick2 = User.builder().id(2).name("rick").email("ggg@ggg.ru").build();
         Mockito.when(mockUserRepository.findById(Mockito.anyInt())).thenReturn(Optional.ofNullable(rick));

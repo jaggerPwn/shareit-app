@@ -16,13 +16,14 @@ public class BookingController {
 
     @PostMapping
     public BookingWithItemDto saveBooking(
-            @RequestBody BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId
-            , @RequestHeader("X-Sharer-User-Id") int userId) {
+            @RequestBody BookingDtoWithStartEndItemId bookingDtoWithStartEndItemId,
+            @RequestHeader("X-Sharer-User-Id") int userId) {
         return bookingService.save(bookingDtoWithStartEndItemId, userId);
     }
 
+
     @PatchMapping("/{id}")
-    public BookingWithItemDto ApproveBooking(@PathVariable(value = "id") int bookingId, @RequestParam("approved") boolean accept,
+    public BookingWithItemDto approveBooking(@PathVariable(value = "id") int bookingId, @RequestParam("approved") boolean accept,
                                              @RequestHeader("X-Sharer-User-Id") int userId) {
         return bookingService.approveBooking(bookingId, accept, userId);
     }

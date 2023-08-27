@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto saveNewUser(@Valid @RequestBody UserDto userDTO) {
+    public UserDto saveNewUser(@RequestBody UserDto userDTO) {
         return userService.saveUser(userDTO);
     }
 
@@ -41,7 +40,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    private void deleteUsers(){
+    private void deleteUsers() {
         userService.deleteUsers();
     }
 }
