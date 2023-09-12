@@ -26,7 +26,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.validation.UserValidator;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -105,7 +104,6 @@ public class ItemServiceImpl implements ItemService {
         return itemDtos;
     }
 
-    @NotNull
     private List<Item> getItemsAsPage(int userId, Integer size, Integer from) {
         Pageable pageRequest = createPageRequestUsing(from, size);
         Page<Item> itemsPage = itemRepository.findByUserIdOrderByIdAsc(userId, pageRequest);

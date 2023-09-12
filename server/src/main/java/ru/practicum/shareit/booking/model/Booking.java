@@ -1,7 +1,4 @@
 package ru.practicum.shareit.booking.model;
-
-import javax.validation.constraints.NotNull;
-
 import lombok.*;
 
 import ru.practicum.shareit.item.model.Item;
@@ -21,10 +18,8 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotNull
     @Column(name = "start_date")
     private LocalDateTime start;
-    @NotNull
     @Column(name = "end_date")
     private LocalDateTime end;
     @ManyToOne(fetch = FetchType.EAGER)
